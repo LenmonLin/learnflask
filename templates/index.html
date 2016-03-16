@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>caculater</title>
+    <script src="add.js" type="text/javascript"></script>
+</head>
+<body>
+    <div align="center" style="margin-t">
+        <img src="{{ url_for('static',filename='cal.jpg')}}">
+    </div>
+    <div align="center" style="margin-top: 40px;">
+        <form name="form1" method="post">
+            {{ message  }}
+            <input type="text" placeholder="jiashu" name="add1">+
+            <input type="text" placeholder="jiashu2" name="add2">=
+            <input readonly="readonly" placeholder="jieguo" name="result" value="{{message}}">
+            <input type="submit" placeholder="he" value="jisuan" onclick="add()">
+
+        </form>
+
+    </div>
+
+</body>
+<footer></footer>
+</html>
