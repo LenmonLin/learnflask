@@ -1,6 +1,7 @@
 #_*_ coding:utf-8 _*_
 
 import os
+#import MySQLdb
 from flask import Flask,render_template,url_for,session,redirect,flash
 from flask.ext.bootstrap import Bootstrap
 from flask.ext.moment import Moment
@@ -15,11 +16,13 @@ from flask.ext.script import Manager
 # 2,404中视图函数忘记加return
 # 3,使用图片，要在user.html 中添加<img src=“{{img}}”>才可以用
 # 4,表单的使用，要设置app.config['SECRET_KEY]的值，才能使用，否则会报错。
+# 5,app.config['SQLALCHEMY_DATABASE_URI']写成 ['SQLALCHEMY_DATABASE_URL']查到快挂了才查出来,不是URL，不要想当然，看来得多用TABLE，不要相信自己的拼写能力！
 
-
+#basedir =os.path.abspath(os.path.dirname(__file__))
 app = Flask(__name__)
 app.config['SECRET_KEY'] ='hard to guess'
-app.config['SQLALCHEMY_DATABASE_URL']='mysql://root:root@localhost:3306/text2'
+#app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///'+os.path.join(basedir,'data.sqlite')
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:root@localhost:3306/text1'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
 bootstrap = Bootstrap(app)
 moment = Moment(app)
@@ -30,7 +33,7 @@ class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(64),unique=True)
-    user = db.relationship('User',backref='role')
+    user = db.relationship('User',backref='role',lazy='dynamic')
 
     def __repr__(self):
         return '<Role {}> '.format(self.name)
@@ -72,4 +75,5 @@ def page_not_found(e):
     return render_template('404.html'),404  #2,
 
 if __name__ == '__main__':
+    db.create_all()
     manager.run()
