@@ -12,7 +12,7 @@ from  wtforms.validators  import Required
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.script import Shell
-
+from flask.ext.migrate import Migrate,MigrateCommand
 # 1,要添加extend bootstrap 模板，要导入Bootstrap才可以
 # 2,404中视图函数忘记加return
 # 3,使用图片，要在user.html 中添加<img src=“{{img}}”>才可以用
@@ -29,6 +29,8 @@ bootstrap = Bootstrap(app)
 moment = Moment(app)
 db = SQLAlchemy(app)
 manager = Manager(app)
+migrate = Migrate(app,db)
+manager.add_command('db',MigrateCommand)
 
 class Role(db.Model):
     __tablename__ = 'roles'
@@ -98,4 +100,4 @@ if __name__ == '__main__':
     # user_david = User(username = 'david',role = user_role)
     # db.session.add_all([admin_role,mod_role,user_role,user_john,user_susan,user_david])
     # db.session.commit()
-    app.run()
+    manager.run()
