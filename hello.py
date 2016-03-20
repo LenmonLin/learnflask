@@ -13,6 +13,8 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.script import Manager
 from flask.ext.script import Shell
 from flask.ext.migrate import Migrate,MigrateCommand
+from flask.ext.mail import Mail,Message
+
 # 1,要添加extend bootstrap 模板，要导入Bootstrap才可以
 # 2,404中视图函数忘记加return
 # 3,使用图片，要在user.html 中添加<img src=“{{img}}”>才可以用
@@ -23,7 +25,7 @@ from flask.ext.migrate import Migrate,MigrateCommand
 app = Flask(__name__)
 app.config['SECRET_KEY'] ='hard to guess'
 #app.config['SQLALCHEMY_DATABASE_URI']= 'sqlite:///'+os.path.join(basedir,'data.sqlite')
-app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:root@localhost:3306/text1'
+app.config['SQLALCHEMY_DATABASE_URI']='mysql://root:密码@localhost:3306/text1'
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN']=True
 bootstrap = Bootstrap(app)
 moment = Moment(app)
@@ -31,7 +33,19 @@ db = SQLAlchemy(app)
 manager = Manager(app)
 migrate = Migrate(app,db)
 manager.add_command('db',MigrateCommand)
-
+app.config['MAIL_SERVER'] = 'smtp.qq.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] =True
+#app.config['MAIL_USERNAME'] = os.environ.get('MAIL_USERNAME')
+app.config['MAIL_USERNAME'] = '1xxxxx790'
+#app.config['MAIL_PASSWORD'] = os.environ.get('MAIL_PASSWORD')
+app.config['MAIL_PASSWORD'] = 'axxxxxxxxxxxxxxdd'
+mail = Mail(app)
+app.config['FLASKY_MAIL_SUBJECT_PREFIX']='[Flasky]'
+#app.config['FLASKY_MAIL_SENDER']='Flasky Admin <flasky@example.com>'
+app.config['FLASKY_MAIL_SENDER']='1xxxxx790@qq.com'
+#app.config['FLASKY_ADMIN']=os.environ.get('FLASKY_ADMIN')
+app.config['FLASKY_ADMIN']='8xxxxx517@qq.com'
 class Role(db.Model):
     __tablename__ = 'roles'
     id = db.Column(db.Integer,primary_key=True)
@@ -67,6 +81,8 @@ def index():
             user = User(username=myform.name.data)
             db.session.add(user)
             session['known'] = False
+            if app.config['FLASKY_ADMIN']:
+                send_email(app.config['FLASKY_ADMIN'],'New User','mail/new_user',user=user)
         else:
             session['known'] = True
         session['name']= myform.name.data
@@ -76,7 +92,7 @@ def index():
 
 @app.route('/user/<name>')
 def user(name):
-    img = url_for('static',filename='cal.jpg')
+    img = url_for('static',filename='favicon.ico')
     return render_template('user.html',name = name,img=img,current_time=datetime.utcnow())
 
 @app.errorhandler(404)
@@ -87,6 +103,13 @@ def page_not_found(e):
 def make_shell_context():
     return dict(app=app,db=db,User=User,Role=Role)
 manager.add_command('shell',Shell(make_context=make_shell_context))
+
+def send_email(to,subject,template,**kwargs):
+    msg = Message(app.config['FLASKY_MAIL_SUBJECT_PREFIX']+subject,
+                  sender=app.config['FLASKY_MAIL_SENDER'],recipients=[to])
+    msg.body = render_template(template+'.txt',**kwargs)
+    msg.html=render_template(template+'.html',**kwargs)
+    mail.send(msg)
 
 
 
@@ -100,4 +123,4 @@ if __name__ == '__main__':
     # user_david = User(username = 'david',role = user_role)
     # db.session.add_all([admin_role,mod_role,user_role,user_john,user_susan,user_david])
     # db.session.commit()
-    manager.run()
+    app.run()
