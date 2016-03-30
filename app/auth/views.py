@@ -84,3 +84,4 @@ def resend_confirmation():
                'auth/email/confirm',user=current_user,token=token)
     flash('a new confirmation email has been sent to you by email')
     return redirect(url_for('main.index'))
+
