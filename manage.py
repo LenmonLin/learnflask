@@ -47,7 +47,13 @@ def init2():
     db.session.add(u)
     db.session.commit()
 
-
+@manager.command
+def generate_fake():
+    """
+    create a fake data
+    """
+    User.generate_fake(100)
+    Post.generate_fake(100)
 if __name__ == '__main__':
 
     manager.run()
