@@ -121,12 +121,21 @@ class User(UserMixin,db.Model):
         return '{url}/{hash}?s={size}&d={default}&r={rating}'.format(
             url=url,hash=hash,size=size,default=default,rating=rating)
 
+    posts=db.relationship('Post',backref='author',lazy='dynamic')
+
 class AnonymousUser(AnonymousUserMixin):
     def can(self,permissions):
         return False
 
     def is_adminstrator(self):
         return False
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer,primary_key=True)
+    body=db.Column(db.Text)
+    timestamp=db.Column(db.DateTime,index=True,default=datetime.utcnow)
+    authon_id=db.Column(db.Integer,db.ForeignKey('users.id'))
 
 login_manager.anonymous_user=AnonymousUser
 
