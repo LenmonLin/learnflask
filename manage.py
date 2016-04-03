@@ -28,7 +28,7 @@ def test():
 def initdata():
     """ cretat a new data"""
     db.create_all()
-    admin_role =Role(name = 'Admin')
+    admin_role =Role(name = 'Administrator')
     mod_role = Role(name = 'Moderator')
     user_role =Role(name = 'User')
     user_john = User(username = 'john',role=admin_role)
@@ -37,6 +37,8 @@ def initdata():
     db.session.add_all([admin_role,mod_role,user_role,user_john,user_susan,user_david])
     db.session.commit()
     Role.insert_roles()
+    User.generate_fake(100)
+    Post.generate_fake(100)
 
 @manager.command
 def init2():
