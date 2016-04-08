@@ -88,8 +88,7 @@ class User(UserMixin,db.Model):
     def confirm(self,token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
-            data =s.load(token)
-
+            data =s.loads(token)
         except:
             return False
         if data.get('confirm')!=self.id:
@@ -171,6 +170,10 @@ class User(UserMixin,db.Model):
     def is_followed_by(self,user):
         return self.followers.filter_by(followed_id=user.id).first() is not None
 
+    @property
+    def followed_posts(self):
+        return Post.query.join(Follow, Follow.followed_id == Post.authon_id)\
+            .filter(Follow.follower_id == self.id)
 
 
 class AnonymousUser(AnonymousUserMixin):
