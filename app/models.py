@@ -112,7 +112,7 @@ class User(UserMixin,db.Model):
         return self.role is not None and \
                (self.role.permissions & permissions) == permissions
 
-    def is_administrators(self):
+    def is_administrator(self):
         return self.can(Permission.ADMINISTER)
 
     def ping(self):
@@ -180,7 +180,7 @@ class AnonymousUser(AnonymousUserMixin):
     def can(self,permissions):
         return False
 
-    def is_adminstrator(self):
+    def is_administrator(self):
         return False
 
 class Post(db.Model):
