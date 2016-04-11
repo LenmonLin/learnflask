@@ -221,10 +221,10 @@ login_manager.anonymous_user=AnonymousUser
 
 class Permission:
     FOLLOW = 0x01
-    COMMIT = 0x02
+    COMMENT = 0x02
     WRITE_ARTICLES=0x04
     MODERATE_COMMENTS=0x08
-    ADMINISTER=0X80
+    ADMINISTER=0x80
 
 
 
