@@ -26,10 +26,10 @@ class Role(db.Model):
     def insert_roles():
         roles={
             'User':(Permission.FOLLOW |
-                    Permission.COMMIT |
+                    Permission.COMMENT |
                     Permission.WRITE_ARTICLES,True),
             'Moderator': (Permission.FOLLOW |
-                          Permission.COMMIT |
+                          Permission.COMMENT |
                           Permission.WRITE_ARTICLES |
                           Permission.MODERATE_COMMENTS,False),
             'Administrator':(0xff,False)
@@ -174,7 +174,7 @@ class User(UserMixin,db.Model):
 
     @property
     def followed_posts(self):
-        return Post.query.join(Follow, Follow.followed_id == Post.authon_id)\
+        return Post.query.join(Follow, Follow.followed_id == Post.author_id)\
             .filter(Follow.follower_id == self.id)
 
     def to_json(self):
@@ -218,7 +218,7 @@ class Post(db.Model):
     id = db.Column(db.Integer,primary_key=True)
     body=db.Column(db.Text)
     timestamp=db.Column(db.DateTime,index=True,default=datetime.utcnow)
-    authon_id=db.Column(db.Integer,db.ForeignKey('users.id'))
+    author_id=db.Column(db.Integer,db.ForeignKey('users.id'))
     body_html = db.Column(db.Text)
     comments = db.relationship('Comment', backref='post', lazy='dynamic')
     @staticmethod
