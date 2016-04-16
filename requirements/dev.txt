@@ -1,2 +1,10 @@
 -r common.txt
 ForgeryPy==0.1
+python-editor==0.5
+requests==2.9.1
+selenium==2.53.1
+six==1.10.0
+SQLAlchemy==0.9.9
+visitor==0.1.2
+Werkzeug==0.10.4
+WTForms==1.0.5

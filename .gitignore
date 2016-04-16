@@ -25,3 +25,6 @@ var/
 # virtualenv
 venv/
 ENV/
+# others
+sougou_64.deb
+
