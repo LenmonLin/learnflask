@@ -62,6 +62,12 @@ def initdata():
     Post.generate_fake(100)
 
 @manager.command
+def drop():
+    """
+    drop the database
+    """
+    db.drop_all()
+@manager.command
 def init2():
     """
     create a text data
